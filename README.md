@@ -1,0 +1,1 @@
+This repository is for a class following "Django 5 for the Impatient - Second Edition" - By Daniel Correa, Greg Lim & is essentially a clone of (this)[https://github.com/PacktPublishing/Django-5-for-the-Impatient-Second-Edition/tree/main/Chapter07/moviesstore].
