@@ -7,11 +7,21 @@ def index(request):
     if search_term:
         movies = Movie.objects.filter(name__icontains=search_term)
     else:
-        movies = Movie.objects.all()
+        hide = request.session.get('hide', [])
+        movies = Movie.objects.exclude(id__in=hide)
     template_data = {}
     template_data['title'] = 'Movies'
     template_data['movies'] = movies
     return render(request, 'movies/index.html',
+                  {'template_data': template_data})
+
+def hidden(request):
+    hide = request.session.get('hide', [])
+    movies = Movie.objects.filter(id__in=hide)
+    template_data = {}
+    template_data['title'] = 'Movies'
+    template_data['movies'] = movies
+    return render(request, 'movies/hidden.html',
                   {'template_data': template_data})
 
 def show(request, id):
@@ -23,6 +33,23 @@ def show(request, id):
     template_data['reviews'] = reviews
     return render(request, 'movies/show.html',
                   {'template_data': template_data})
+
+@login_required
+def hide(request, id):
+    get_object_or_404(Movie, id=id)
+    hide = request.session.get('hide', [])
+    if not id in hide:
+        hide.append(id)
+    request.session['hide'] = hide
+    return redirect('movies.index')
+
+def unhide(request, id):
+    get_object_or_404(Movie, id=id)
+    hide = request.session.get('hide', [])
+    if id in hide:
+        hide.remove(id)
+    request.session['hide'] = hide
+    return redirect('movies.hidden')
 
 @login_required
 def create_review(request, id):
