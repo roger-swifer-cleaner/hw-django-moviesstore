@@ -5,7 +5,7 @@
   <div class="container">
     <div class="row mt-3">
       <div class="col mx-auto mb-3">
-        <h2>List of Movies</h2>
+        <h2>Petitions</h2>
         <hr />
         <p class="card-text">
           <form method="GET">
@@ -22,13 +22,10 @@
                 <button class="btn bg-dark text-white"
                   type="submit">Search</button>
             {% if user.is_authenticated %}
-            <a href="{% url 'movies.hidden' %}" class="btn bg-dark text-white">
-              Show Hidden
+            <a href="{% url 'petition.make_petition' %}" class="btn bg-dark text-white">
+              Make Petition
             </a>
             {% endif %}
-            <a href="{% url 'petition.index' %}" class="btn bg-dark text-white">
-              Petitions
-            </a>
               </div>
             </div>
           </form>
@@ -36,17 +33,30 @@
       </div>
     </div>
     <div class="row">
-      {% for movie in template_data.movies %}
+      {% for petition in template_data.petitions %}
       <div class="col-md-4 col-lg-3 mb-2">
         <div class="p-2 card align-items-center pt-4">
           <img src="{{ movie.image.url }}" class="card-img-top rounded img-card-200">
           <div class="card-body text-center">
-            <a href="{% url 'movies.show' id=movie.id %}" class="btn bg-dark text-white">
-              {{ movie.name }}
-            </a>
+            <h3>
+              {{ petition.name }}
+            </h3>
+            <p>
+              Votes: {{ petition.votes }}
+            </p>
             {% if user.is_authenticated %}
-            <a href="{% url 'movies.hide' id=movie.id %}" class="btn bg-dark text-white">
-              Hide
+                {% if petition.has_voted %}
+                <a href="{% url 'petition.unvote' id=petition.id %}" class="btn bg-dark text-white">
+                  Unvote
+                </a>
+                {% else %}
+                <a href="{% url 'petition.vote' id=petition.id %}" class="btn bg-dark text-white">
+                  Vote
+                </a>
+                {% endif %}
+            {% endif %}
+            {% if user.is_authenticated and user == petition.user %}
+            <a class="btn btn-danger" href="{% url 'petition.delete' id=petition.id %}">Delete
             </a>
             {% endif %}
           </div>
